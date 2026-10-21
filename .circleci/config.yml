@@ -1,0 +1,19 @@
+version: 2.1
+jobs:
+  validate:
+    docker:
+      - image: cimg/node:22.14.0
+    resource_class: small
+    environment:
+      CI: "true"
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - checkout
+      - run: npm ci --no-audit --no-fund
+      - run: npm run test:ci -- --runInBand
+      - run: npx --no-install tsc --noEmit
+      - run: npm run build
+workflows:
+  validate:
+    jobs:
+      - validate
